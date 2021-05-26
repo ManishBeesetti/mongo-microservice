@@ -17,7 +17,7 @@ def stat(code,description):
 
 def dbconnection(database):
     try:
-        url = "mongodb+srv://bat:123@dataservice.cyb3r.mongodb.net/discord?retryWrites=true&w=majority"
+        url = "mongodb+srv://ruser:123@batserver.0hc30.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
         client = MongoClient(url)
         print("connection successfull")
         return client.get_database(database)
