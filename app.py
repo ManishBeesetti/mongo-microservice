@@ -33,7 +33,7 @@ def signup():
         password = request.args.get('pass')
         print(username)
         print(password)
-        db = dbconnection('discord')
+        db = dbconnection('Agora_user_db')
 
 
         print(type(db))
@@ -60,7 +60,7 @@ def login():
     try:
         username = request.args.get('user')
         password = request.args.get('pass')
-        db = dbconnection('discord')
+        db = dbconnection('Agora_user_db')
         collection = db.user
         doc = collection.find_one({"uname":username})
         print(doc)
@@ -79,7 +79,7 @@ def add():
     try:
         username = request.args.get('user')
         link = request.args.get('link')
-        db = dbconnection('discord')
+        db = dbconnection('Agora_user_db')
         collection = db.playlists
         db.playlists.create_index([("uname",pymongo.DESCENDING),("link",pymongo.ASCENDING)],unique=True)
 
@@ -101,7 +101,7 @@ def play():
 
 
         username = request.args.get('user')
-        db = dbconnection('discord')
+        db = dbconnection('Agora_user_db')
         collection = db.playlists
 
         doc_li = [ str(doc).replace("\'", "\"") for doc in collection.find({"uname":username},{'_id':False})]
