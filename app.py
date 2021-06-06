@@ -82,7 +82,7 @@ def login():
         collection = db.user
         doc = collection.find_one({"email":email})
         print("login" + str(doc))
-        if (doc['password'] == hashlib.sha256((password+doc['private_key'].encode('utf-8')).hexdigest()) :
+        if doc['password'] == hashlib.sha256((password+doc['private_key'].encode('utf-8'))).hexdigest():
             return stat(0,os.urandom(256))
         else:
             return stat(2,'check password')
