@@ -2,12 +2,15 @@ import pymongo
 import traceback
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
+from flask_cors import CORS, cross_origin
 import json
 import re
 
 from flask import Flask
 from flask import request
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 def stat(code,description):
     return {
