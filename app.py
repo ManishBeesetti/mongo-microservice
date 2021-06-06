@@ -82,12 +82,14 @@ def login():
         collection = db.user
         doc = collection.find_one({"email":email})
         private_key = doc['private_key']
+        
+        
         print("\n\n")
         print("private_key",end = " : ")
         print(private_key,end=" : ")
         print(type(private_key),end="\n")
         print("docPassword ",end=": ")
-        print(doc[password], end = " : ")
+#         print(doc['password'], end = " : ")
         print(type(doc['password']),end="\n")
         print(password, end=" ")
         print(type(password),end = " \n\n")
