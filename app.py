@@ -28,6 +28,7 @@ def dbconnection(database):
     except:
         print("connection failed")
 
+@cross_origin()
 @app.route('/signup',methods=["GET","POST"])
 def signup():
     try:
@@ -58,6 +59,7 @@ def signup():
         traceback.print_exc()
         return stat(-1,'failed') #db service issue
 
+@cross_origin()
 @app.route('/login',methods=["GET","POST"])
 def login():
     try:
@@ -77,6 +79,7 @@ def login():
         traceback.print_exc()
         return stat(-1,"invalid username signup")
 
+@cross_origin()
 @app.route('/add',methods=["GET","POST"])
 def add():
     try:
@@ -98,6 +101,7 @@ def add():
         traceback.print_exc()
         return stat(-1,'failed') #db service issue
 
+@cross_origin()
 @app.route('/play',methods=["GET","POST"])
 def play():
     try:
