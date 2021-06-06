@@ -83,14 +83,16 @@ def login():
         doc = collection.find_one({"email":email})
         print("login" + str(doc))
         
+        summation = (password + str(doc['private_key'])).hexdigest()
+        print(summation)
+        
         print("\n** PRINTING DOC PASSWORD **"+str(doc['password']),end="\n")
-        print("** CRYPTIC **"+str(hashlib.sha256((password+doc['private_key'].encode('utf-8'))).hexdigest()))
+#         print("** CRYPTIC **"+str(hashlib.sha256((password+doc['private_key'].encode('utf-8'))).hexdigest()))
         
 #      Validation Steps
         
         #password private string summation
-        summation = (password + str(doc['private_key'])).hexdigest()
-        print(summation)
+        
         
         
         
