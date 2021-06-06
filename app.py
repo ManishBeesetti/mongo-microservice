@@ -1,16 +1,22 @@
+from random import seed
 import pymongo
 import traceback
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
-from flask_cors import CORS, cross_origin
 import json
 import re
+import hashlib
+from datetime import datetime as dt
+from flask_cors import CORS, cross_origin
+import os
 
-from flask import Flask
+
+from flask import Flask, session
 from flask import request
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['Secretkey'] = os.urandom(256)
 
 def stat(code,description):
     return {
@@ -28,7 +34,6 @@ def dbconnection(database):
     except:
         print("connection failed")
 
-@cross_origin()
 @app.route('/signup',methods=["GET","POST"])
 def signup():
     try:
@@ -37,7 +42,8 @@ def signup():
         lname = request.args.get('lname')
         email = request.args.get('email')
         password = request.args.get('password')
-    
+        private_key = hashlib.sha256((email+str(dt.now())).encode('utf-8')).hexdigest()
+
         db = dbconnection('Agora_user_db')
 
 
@@ -48,11 +54,15 @@ def signup():
         print("here2")
         post = {
         'email' : email,
-        'password': password,
-            'fname':fname,
-            'lname':lname
+        'fname':fname,
+        'lname':lname,
+        'private_key' : private_key,
+        'password': hashlib.sha256((password+private_key).encode('utf-8')).hexdigest()
         }
+        print(post)
+        print(collection)
         post_id = collection.insert_one(post).inserted_id
+        # post_id = collection.insert_one(post)
         print("here3")
         return stat(0,'success') #signup successful
     except DuplicateKeyError:
@@ -62,73 +72,27 @@ def signup():
         traceback.print_exc()
         return stat(-1,'failed') #db service issue
 
-@cross_origin()
 @app.route('/login',methods=["GET","POST"])
 def login():
+
     try:
         email = request.args.get('email')
         password = request.args.get('password')
         db = dbconnection('Agora_user_db')
         collection = db.user
         doc = collection.find_one({"email":email})
-        print(doc)
-        if doc['password'] == password:
-            return stat(0,'success')
+        print("login" + str(doc))
+        if (doc['password'] == hashlib.sha256((password+doc['private_key']).encode('utf-8')).hexdigest()) and doc['verified'] == 1 :
+            return stat(0,os.urandom(256))
         else:
-            return stat(1,'check password')
+            if doc['verified'] == 0:
+                return stat(1,'verify email address')
+            return stat(2,'check password')
 
 
     except:
         traceback.print_exc()
-        return stat(-1,"invalid username signup")
-
-@cross_origin()
-@app.route('/add',methods=["GET","POST"])
-def add():
-    try:
-        username = request.args.get('user')
-        link = request.args.get('link')
-        db = dbconnection('Agora_user_db')
-        collection = db.playlists
-        db.playlists.create_index([("uname",pymongo.DESCENDING),("link",pymongo.ASCENDING)],unique=True)
-
-        post = {
-        "uname" : username,
-        "link" : link
-        }
-        post_id = collection.insert_one(post).inserted_id
-        return stat(0,'success') #insertion successful
-    except DuplicateKeyError:
-        return stat(1,'exists') #song exists
-    except:
-        traceback.print_exc()
-        return stat(-1,'failed') #db service issue
-
-@cross_origin()
-@app.route('/play',methods=["GET","POST"])
-def play():
-    try:
-
-
-        username = request.args.get('user')
-        db = dbconnection('Agora_user_db')
-        collection = db.playlists
-
-        doc_li = [ str(doc).replace("\'", "\"") for doc in collection.find({"uname":username},{'_id':False})]
-
-        dl2 = [json.loads(el)['link'] for el in doc_li]
-        # for el in doc_li:
-        #     dl2.append(json.loads(el)['link'])
-
-
-        return stat(0,dl2)
-    except:
-        traceback.print_exc()
-        return stat(-1,'failed to fetch')
-
-
-
-
+        return stat(-1,"invalid username "+email)
 
 
 
@@ -143,4 +107,4 @@ def play():
 
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0')
+    app.run(debug=True,host="0.0.0.0")
