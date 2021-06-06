@@ -33,21 +33,24 @@ def dbconnection(database):
 def signup():
     try:
         print("wassup")
-        username = request.args.get('user')
-        password = request.args.get('pass')
-        print(username)
-        print(password)
+        fname = request.args.get('fname')
+        lname = request.args.get('lname')
+        email = request.args.get('email')
+        password = request.args.get('password')
+    
         db = dbconnection('Agora_user_db')
 
 
         print(type(db))
-        db.user.create_index([("uname",pymongo.DESCENDING)],unique=True)
+        db.user.create_index([("email",pymongo.DESCENDING)],unique=True)
         print("here")
         collection = db.user
         print("here2")
         post = {
-        'uname' : username,
-        'password': password
+        'email' : email,
+        'password': password,
+            'fname':fname,
+            'password':password
         }
         post_id = collection.insert_one(post).inserted_id
         print("here3")
@@ -63,11 +66,11 @@ def signup():
 @app.route('/login',methods=["GET","POST"])
 def login():
     try:
-        username = request.args.get('user')
-        password = request.args.get('pass')
+        email = request.args.get('email')
+        password = request.args.get('password')
         db = dbconnection('Agora_user_db')
         collection = db.user
-        doc = collection.find_one({"uname":username})
+        doc = collection.find_one({"email":email})
         print(doc)
         if doc['password'] == password:
             return stat(0,'success')
