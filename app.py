@@ -50,7 +50,7 @@ def signup():
         'email' : email,
         'password': password,
             'fname':fname,
-            'password':password
+            'lname':lname
         }
         post_id = collection.insert_one(post).inserted_id
         print("here3")
