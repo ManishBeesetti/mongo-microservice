@@ -102,7 +102,7 @@ def login():
         
         
         if doc['password'] == hashlib.sha256((password+private_key).encode('utf-8')).hexdigest():
-            return stat(0,os.urandom(256))
+            return stat(0,str(os.urandom(256)))
         else:
             return stat(2,'check password')
 
