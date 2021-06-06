@@ -81,22 +81,14 @@ def login():
         db = dbconnection('Agora_user_db')
         collection = db.user
         doc = collection.find_one({"email":email})
+        private_key = doc['private_key']
         print("login" + str(doc))
         
-        summation = (password + str(doc['private_key'])).hexdigest()
-        print(summation)
-        
-        print("\n** PRINTING DOC PASSWORD **"+str(doc['password']),end="\n")
-#         print("** CRYPTIC **"+str(hashlib.sha256((password+doc['private_key'].encode('utf-8'))).hexdigest()))
-        
-#      Validation Steps
-        
-        #password private string summation
         
         
         
         
-        if doc['password'] == hashlib.sha256((password+doc['private_key'].encode('utf-8'))).hexdigest():
+        if doc['password'] == hashlib.sha256((password+private_key).encode('utf-8')).hexdigest():
             return stat(0,os.urandom(256))
         else:
             return stat(2,'check password')
