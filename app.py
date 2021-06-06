@@ -83,8 +83,9 @@ def login():
         doc = collection.find_one({"email":email})
         private_key = doc['private_key']
         print("\n\n")
+        print("private_key",end = " : ")
         print(private_key)
-        type(private_key,end="\n\n")
+        print(type(private_key),end="\n\n")
         print("login" + str(doc))
         
         
